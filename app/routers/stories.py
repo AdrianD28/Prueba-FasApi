@@ -1,8 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
+from app.services import get_user_stories
 
 router = APIRouter()
 
 @router.get("/")
-async def get_user_stories(session_id: str = None):
-    # Lógica para obtener historias de usuario basadas en session_id
-    return {"message": "Historias de usuario"}
+async def get_stories(session_id: str = Query(None)):
+    stories = await get_user_stories(session_id)
+    return stories

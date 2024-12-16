@@ -1,7 +1,8 @@
+# app/routers/events.py
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any
-from app.services import add_event, retrieve_events
+from app.services import add_event
 
 router = APIRouter()
 
@@ -14,33 +15,38 @@ class EventProperties(BaseModel):
     pathname: str = Field(..., alias="$pathname")
     browser: str = Field(..., alias="$browser")
     device: str = Field(..., alias="$device")
+    referrer: str = Field(..., alias="$referrer")
+    referring_domain: str = Field(..., alias="$referring_domain")
     screen_height: int = Field(..., alias="$screen_height")
     screen_width: int = Field(..., alias="$screen_width")
-    event_type: str = Field(..., alias="eventType")
-    element_type: str = Field(..., alias="elementType")
-    element_text: str = Field(..., alias="elementText")
-    element_attributes: Dict[str, Any] = Field(..., alias="elementAttributes")
+    eventType: str
+    elementType: str
+    elementText: str
+    elementAttributes: Dict[str, Any]
     timestamp: str
     x: int
     y: int
-    mouse_button: int = Field(..., alias="mouseButton")
-    ctrl_key: bool = Field(..., alias="ctrlKey")
-    shift_key: bool = Field(..., alias="shiftKey")
-    alt_key: bool = Field(..., alias="altKey")
-    meta_key: bool = Field(..., alias="metaKey")
+    mouseButton: int
+    ctrlKey: bool
+    shiftKey: bool
+    altKey: bool
+    metaKey: bool
 
 class Event(BaseModel):
     event: str
     properties: EventProperties
     timestamp: str
 
-@router.post("/")
-async def receive_events(events: List[Event]):
-    for event in events:
-        event_data = event.dict(by_alias=True)
-        await add_event(event_data)
-    return {"message": "Eventos recibidos y almacenados"}
+class EventsRequest(BaseModel):
+    events: List[Event]
 
-@router.get("/")
-async def get_events():
-    return await retrieve_events()
+
+@router.post("/")
+async def receive_events(request: EventsRequest):
+    for event in request.events:
+        event_data = event.dict(by_alias=True)
+        try:
+            await add_event(event_data)  
+        except Exception as e:
+            return {"message": "Error al guardar el evento", "error": str(e)}
+    return {"message": "Eventos recibidos y almacenados en la base de datos"}
