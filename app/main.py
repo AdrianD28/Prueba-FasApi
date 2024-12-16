@@ -1,5 +1,10 @@
+import asyncio
+import platform
 from fastapi import FastAPI
 from app.routers import events, stories, tests
+
+if platform.system() == "Windows":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 app = FastAPI()
 

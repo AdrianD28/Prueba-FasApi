@@ -10,15 +10,15 @@ class EventProperties(BaseModel):
     distinct_id: str
     session_id: str
     journey_id: str
-    current_url: str = Field(..., alias="$current_url")
-    host: str = Field(..., alias="$host")
-    pathname: str = Field(..., alias="$pathname")
-    browser: str = Field(..., alias="$browser")
-    device: str = Field(..., alias="$device")
-    referrer: str = Field(..., alias="$referrer")
-    referring_domain: str = Field(..., alias="$referring_domain")
-    screen_height: int = Field(..., alias="$screen_height")
-    screen_width: int = Field(..., alias="$screen_width")
+    current_url: str = Field(..., alias="current_url")
+    host: str = Field(..., alias="host")
+    pathname: str = Field(..., alias="pathname")
+    browser: str = Field(..., alias="browser")
+    device: str = Field(..., alias="device")
+    referrer: str = Field(..., alias="referrer")
+    referring_domain: str = Field(..., alias="referring_domain")
+    screen_height: int = Field(..., alias="screen_height")
+    screen_width: int = Field(..., alias="screen_width")
     eventType: str
     elementType: str
     elementText: str
