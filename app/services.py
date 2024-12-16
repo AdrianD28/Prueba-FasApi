@@ -6,8 +6,6 @@ from bson import ObjectId
 from app.database import event_collection
 import re
 from playwright.sync_api import sync_playwright
-
-# Modelo para validar las propiedades del evento
 class EventProperties(BaseModel):
     distinct_id: str
     session_id: str
@@ -34,8 +32,6 @@ class EventProperties(BaseModel):
     altKey: bool
     metaKey: bool
 
-
-# Constantes para tipos de eventos
 EVENT_CLICK = "$click"
 EVENT_INPUT = "$input"
 EVENT_NAVIGATE = "$navigate"
@@ -44,8 +40,7 @@ import re
 from playwright.sync_api import sync_playwright, Page, expect
 
 def generate_tests(story_id: str) -> str:
-    # Recuperar los eventos de la historia (esto lo obtienes de tu base de datos o cualquier fuente)
-    # Aquí estamos simulando los eventos de la historia de usuario
+
     events = [
         {"event": "$click", "properties": {"elementText": "Get started"}},
         {"event": "$input", "properties": {"elementText": "email", "value": "test@example.com"}}
@@ -86,17 +81,14 @@ def test_generated_code_sync(story_id: str) -> str:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
         
-        # Ejecutar el código generado (de forma sincrónica)
-        exec(test_code)  # Ejecuta el código generado dinámicamente
+        exec(test_code)  
         
-        # Aserción adicional
         assert page.title() == "Playwright"
         
         browser.close()
 
     return "Test executed successfully"
 
-# Agregar un evento a la base de datos
 async def add_event(event_data: Dict) -> None:
     try:
         # Validar el evento
@@ -110,7 +102,6 @@ async def add_event(event_data: Dict) -> None:
         print(f"Error al agregar evento: {e}")
 
 
-# Recuperar eventos de la base de datos
 async def retrieve_events(limit: int = 100, skip: int = 0) -> List[Dict]:
     events = []
     async for event in event_collection.find().skip(skip).limit(limit):
@@ -127,23 +118,20 @@ def convert_objectid_to_str(data):
         return str(data)
     return data
 
-# Obtener historias de usuario basadas en eventos
 async def get_user_stories(session_id: str = None) -> List[Dict]:
-    events = await retrieve_events()  # Supongo que esto devuelve eventos con datos MongoDB
+    events = await retrieve_events()  
     user_stories = []
     
-    # Agrupar eventos por session_id o journey_id
     grouped_events = defaultdict(list)
     for event in events:
         key = event['properties']['session_id'] if session_id is None else session_id
         grouped_events[key].append(event)
 
-    # Crear historias de usuario a partir de los eventos agrupados
     for key, events in grouped_events.items():
         user_stories.append({
             "session_id": key,
             "events": convert_objectid_to_str(events),
-            "_id": str(events[0]['_id']) if events else None  # Convertir ObjectId a string
+            "_id": str(events[0]['_id']) if events else None  
         })
     
     return user_stories

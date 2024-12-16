@@ -40,7 +40,6 @@ class Event(BaseModel):
 class EventsRequest(BaseModel):
     events: List[Event]
 
-
 @router.post("/")
 async def receive_events(request: EventsRequest):
     for event in request.events:
