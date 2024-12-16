@@ -177,3 +177,4 @@ curl -X GET http://localhost:8000/api/v1/tests/?story_id
 
 - Asegúrate de que la API esté en ejecución antes de realizar las solicitudes.
 - Puedes utilizar herramientas como Postman o Insomnia para probar los endpoints de manera más interactiva.
+- Puedes usar el swagger http://localhost:8000/docs
